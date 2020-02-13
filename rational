@@ -1,0 +1,114 @@
+#include "stdafx.h"
+#include <iostream>
+using namespace std;
+
+class DivideByZero
+{
+public: 
+	double chisl;
+	DivideByZero(double n)
+	{chisl = n;}
+};
+
+template<class T>
+class Rational
+{
+public:
+	T m, n;
+	Rational(){m = 0; n = 1;}
+	Rational(T _m){m = _m; n = 1;}
+	Rational(T _m, T _n){
+		m = _m;
+		if(_n == 0)
+			throw new DivideByZero((double) m);
+		n = _n;
+	}
+	Rational(const Rational<T> &g){
+		m = g.m;
+		n = g.n;
+	}
+
+	~Rational(){}
+
+	Rational<T> operator=(const Rational<T> &B){
+		m = B.m;
+		n = B.n;
+		return *this;
+	}
+
+	Rational<T> operator+(const Rational<T> &B){
+		if(n == 0)
+			throw new DivideByZero((double) m);
+		else if(B.n == 0)
+			throw new DivideByZero((double) B.m);
+		Rational<T> *buf = new Rational<T>();
+		if(n == B.n){
+			buf->n = n;
+			buf->m = m + B.m;
+		}
+		else{
+			buf->n = n * B.n;
+			buf->m = m * B.n + B.m * n;
+		}
+		return *buf;
+	}
+
+	Rational<T> operator-(const Rational<T> &B){
+		if(n == 0)
+			throw new DivideByZero((double) m);
+		else if(B.n == 0)
+			throw new DivideByZero((double) B.m);
+		Rational<T> *buf = new Rational<T>();
+		if(n == B.n){
+			buf->n = n;
+			buf->m = m - B.m;
+		}
+		else{
+			buf->n = n * B.n;
+			buf->m = m * B.n - B.m * n;
+		}
+		return *buf;
+	}
+
+	Rational<T> operator*(const Rational<T> &B){
+		if(n == 0)
+			throw new DivideByZero((double) m);
+		else if(B.n == 0)
+			throw new DivideByZero((double) B.m);
+		Rational<T> *buf = new Rational<T>();
+		buf->m = m * B.m;
+		buf->n = n * B.n;
+		return *buf;
+	}
+
+	friend std::ostream& operator<<(std::ostream &os, Rational<T> B){
+		os<<B.m<<"/"<<B.n;
+		return os;
+	}
+};
+
+
+
+int main()
+{
+	Rational<int> A(4,7), B(2,3), C(2);
+	try{
+		C = A + B; cout<<A<<" + "<<B<<" = "<<C<<endl;
+		C = A - B; cout<<A<<" - "<<B<<" = "<<C<<endl;
+		C = A * B; cout<<A<<" * "<<B<<" = "<<C<<endl;
+	}
+	catch(DivideByZero *E)
+	{cout<<"Divide by zero "<<E->chisl<<endl;}
+
+	Rational<long> X(5,2), Y(8,5), Z(4);
+	try{
+		Z = X + Y; cout<<X<<" + "<<Y<<" = "<<Z<<endl;
+		Z = X - Y; cout<<X<<" - "<<Y<<" = "<<Z<<endl;
+		Z = X * Y; cout<<X<<" * "<<Y<<" = "<<Z<<endl;
+	}
+	catch(DivideByZero *G)
+	{cout<<"Divide by zero "<<G->chisl<<endl;}
+	
+	system("pause");
+	return 0;
+}
